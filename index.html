@@ -9,18 +9,92 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <title>Tính khối lượng</title>
-<style>
-/* styles inlined - see local repo for full CSS */
-body{font-family:system-ui,sans-serif;margin:0;background:#f3f4f6;display:flex;justify-content:center;padding:12px}
-.app{width:min(100%,560px)}.card{background:#fff;border-radius:16px;padding:16px;border:1px solid #e5e7eb}
-</style>
+<link rel="stylesheet" href="./styles.css">
 </head>
 <body>
+<div id="updateBanner" class="update-banner">Có phiên bản mới · <button type="button" id="updateNowBtn">Xác nhận cập nhật</button></div>
+<div id="successBanner" class="toast-banner">Cập nhật thành công · <button type="button" id="successCloseBtn">Đóng</button></div>
 <main class="app">
-  <h1>Tính khối lượng</h1>
-  <p>File index.html đầy đủ + app.js nằm trong artifacts local. Đang đồng bộ lên GitHub.</p>
-  <p>Vui lòng kéo thả <code>index.html</code> và <code>app.js</code> từ thư mục dự án lên repo nếu script chưa có.</p>
-  <script src="./app.js"></script>
+<header>
+  <div><h1>Tính khối lượng</h1><p id="subtitle">Dài × Rộng × Cao ÷ 6</p></div>
+  <div class="header-actions">
+    <button id="settingsBtn" class="settings-btn" type="button">Cài đặt</button>
+    <button id="installBtn" class="install" type="button">Cài app</button>
+  </div>
+</header>
+<section class="card">
+<form id="form" novalidate>
+<div class="work">
+  <div class="left-col">
+    <div class="dims">
+      <div class="field"><label for="l">Dài</label><div class="input"><input id="l" type="number" inputmode="numeric" min="0" step="1" maxlength="4" placeholder="00"><span class="unit" id="unitL">cm</span></div></div>
+      <div class="field"><label for="w">Rộng</label><div class="input"><input id="w" type="number" inputmode="numeric" min="0" step="1" maxlength="4" placeholder="00"><span class="unit" id="unitW">cm</span></div></div>
+      <div class="field"><label for="h">Cao</label><div class="input"><input id="h" type="number" inputmode="numeric" min="0" step="1" maxlength="4" placeholder="00"><span class="unit" id="unitH">cm</span></div></div>
+    </div>
+    <div id="error" class="error" role="alert"></div>
+    <section class="result" aria-live="polite">
+      <div class="result-title">KẾT QUẢ</div>
+      <div class="result-row"><div id="result" class="result-value">0</div><div class="result-unit" id="resultUnit">kg</div></div>
+      <div class="formula" id="formula">Dài × Rộng × Cao ÷ 6</div>
+    </section>
+  </div>
+  <div class="right-col">
+    <div class="actions-stack">
+      <button class="primary" type="submit" id="calcBtn">TÍNH</button>
+      <button id="resetBtn" class="secondary" type="button">XÓA</button>
+      <button id="cameraBtn" class="camera-btn" type="button">📷 Camera / Ảnh</button>
+    </div>
+    <div id="photoWrap" class="photo-wrap">
+      <img id="photoPreview" alt="Ảnh đã chụp">
+      <div id="ocrStatus" class="ocr-status"></div>
+      <div id="ocrTextBox" class="ocr-text"></div>
+      <div id="codeChips" class="code-chips"></div>
+      <div class="photo-actions">
+        <button id="photoRetake" class="secondary" type="button">Chụp lại</button>
+        <button id="photoClear" class="secondary" type="button">Xóa ảnh</button>
+        <button id="shareBtn" class="share-btn" type="button" style="display:none">Chia sẻ Zalo</button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+</section>
+<section class="history">
+<div class="history-head"><h2>Lịch sử</h2><button id="clearHistBtn" class="clear-hist" type="button">Xóa lịch sử</button></div>
+<div id="list" class="list"></div>
+</section>
+<div id="status" class="status">V4.1 · PWA</div>
+<div class="footer">Ứng dụng PWA được thiết kế bởi Long</div>
 </main>
+<input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.heic" style="display:none">
+<div id="camOverlay" class="cam-overlay">
+  <div class="cam-close-top-wrap"><button id="camCloseTop" class="cam-close-x" type="button" aria-label="Đóng">×</button></div>
+  <video id="camVideo" class="cam-video" playsinline autoplay muted></video>
+  <div class="cam-bar">
+    <button id="camGallery" class="cam-gallery" type="button" aria-label="Album"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5a2 2 0 0 1 2-2h3.2l1.2 1.6H18a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5z" stroke="#fff" stroke-width="1.6"/><circle cx="12" cy="13" r="3.2" stroke="#fff" stroke-width="1.6"/></svg></button>
+    <div class="cam-bar-center"><button id="camCapture" class="cam-capture" type="button" aria-label="Chụp"></button></div>
+    <button id="camFlash" class="cam-flash" type="button" style="display:none" aria-label="Flash"><svg viewBox="0 0 24 24"><path fill="#fff" d="M7 2v11h3v9l7-12h-4l4-8z"/></svg></button>
+    <button id="camClose" class="cam-close-x" type="button" style="display:none" aria-label="Đóng">×</button>
+  </div>
+</div>
+<div id="imgViewer" class="viewer">
+  <div id="viewerInfo" class="viewer-info"></div>
+  <img id="viewerImg" alt="Ảnh lịch sử">
+  <div class="viewer-bar"><button id="viewerClose" class="viewer-close" type="button">Đóng</button></div>
+</div>
+<div id="overlay" class="overlay" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head"><h2>Cài đặt</h2><button id="modalClose" class="modal-close" type="button">×</button></div>
+    <div class="field"><label for="setDivisor">Mức chia</label><input id="setDivisor" type="number" inputmode="decimal" min="0.0001" step="any" value="6"><div class="hint">Công thức: Dài × Rộng × Cao ÷ mức chia</div></div>
+    <div class="field"><label for="setUnitIn">Đơn vị kích thước</label><input id="setUnitIn" type="text" maxlength="12" value="cm"></div>
+    <div class="field"><label for="setUnitOut">Đơn vị kết quả</label><input id="setUnitOut" type="text" maxlength="20" value="kg"></div>
+    <div class="field"><label for="setThreshold">Ngưỡng làm tròn</label><input id="setThreshold" type="number" inputmode="decimal" min="0.01" max="0.99" step="0.01" value="0.35"><div class="hint">Phần thập phân < ngưỡng → xuống · ≥ ngưỡng → lên</div></div>
+    <div class="field"><label for="setOcrKey">OCR Cloud API key (OCR.space)</label><input id="setOcrKey" type="text" maxlength="80" placeholder="Để trống = Tesseract khi online" autocomplete="off"><div class="hint">Offline = không OCR. Key miễn phí: ocr.space/ocrapi</div></div>
+    <div class="field"><div class="switch-row"><span class="switch-label">Tự động cập nhật</span><label class="switch"><input id="setAutoUpdate" type="checkbox"><span class="slider"></span></label></div><div class="hint">Tắt (mặc định): không kiểm tra phiên bản khi mở app. Bật: tự kiểm tra khi online.</div></div>
+    <div class="modal-actions"><button id="settingsSave" class="primary" type="button">Lưu</button><button id="settingsCancel" class="secondary" type="button">Hủy</button></div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+<script src="./app.js"></script>
 </body>
 </html>
