@@ -1,27 +1,46 @@
 # Tính khối lượng (PWA)
 
-Ứng dụng Progressive Web App tính khối lượng theo công thức:
+Repo: https://github.com/daothanhlong9a1-coder/TinhKhoiLuong_V2_PWA
 
-`Dài × Rộng × Cao ÷ mức chia`
+## Trạng thái đồng bộ
 
-## Tính năng
+Đã có trên GitHub:
+- `sw.js` (V4.1)
+- `manifest.webmanifest`
+- `icon.svg`
+- `README.md`
 
-- Cài đặt: mức chia, đơn vị, ngưỡng làm tròn, OCR API key, tự động cập nhật (mặc định tắt)
-- Camera / album, flash, overlay kết quả lên ảnh
-- OCR (cloud OCR.space khi có key + online; fallback Tesseract)
-- Lọc mã dạng `XXXX-YYYY`
-- Lịch sử 50 phép tính, chia sẻ Zalo
-- PWA offline (cache cơ bản)
+Cần upload thêm từ máy local (kéo thả trên GitHub hoặc `git push`):
+- `index.html` (bản đầy đủ ~20KB)
+- `app.js` (logic app ~27KB)
+
+File đầy đủ nằm trong thư mục dự án `TinhKhoiLuong_V2_PWA/`.
+
+### Upload nhanh trên GitHub
+
+1. Mở repo → **Add file** → **Upload files**
+2. Kéo `index.html` + `app.js` từ thư mục local
+3. Commit
+
+### Hoặc git
+
+```bash
+git clone https://github.com/daothanhlong9a1-coder/TinhKhoiLuong_V2_PWA.git
+cd TinhKhoiLuong_V2_PWA
+# copy index.html và app.js bản đầy đủ vào đây
+git add index.html app.js
+git commit -m "V4.1 full app"
+git push
+```
 
 ## Chạy local
 
 ```bash
-cd TinhKhoiLuong_V2_PWA
 python -m http.server 8080
 ```
 
-Mở `http://localhost:8080` (không mở bằng `file://`).
+Mở `http://localhost:8080` (không dùng `file://`).
 
 ## Phiên bản
 
-V4.0
+V4.1 — auto-update toggle (mặc định tắt), camera, OCR, lọc mã XXXX-YYYY
